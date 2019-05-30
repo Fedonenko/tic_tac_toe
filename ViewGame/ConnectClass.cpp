@@ -10,6 +10,7 @@ ConnectClass::ConnectClass(QObject *pobj) : QObject(pobj), ICommand ()
     arrCommandItem[Message::NAME_CLIENTS] = &ConnectClass::nameClients;
     arrCommandItem[Message::GAME_INFO] = &ConnectClass::gameInfo;
     arrCommandItem[Message::CONNECTION_INFO] = &ConnectClass::connectionInfo;
+    arrCommandItem[Message::UPDATE] = &ConnectClass::update;
 
     connect(objView->p_buttonConnect, SIGNAL(clicked()),
             this,   SLOT(slotReconnectedToServer()));
@@ -128,4 +129,22 @@ void ConnectClass::connectionInfo(QByteArray& bA){
     QString str;
     in >> str;
     objView->p_serverConnection->setText(str);
+}
+void ConnectClass::update(QByteArray& bA){
+    QStringList listPlayers;
+    int conInfo, idCommand;
+    QString str;
+
+    QDataStream in(&bA, QIODevice::ReadOnly);
+    in >> idCommand >> str;
+    objView->p_serverConnection->setText(str);
+
+    in >> idCommand >> listPlayers;
+    objView->p_listPlayers->clear();
+    objView->p_listPlayers->addItems(listPlayers);
+
+    in >> idCommand;
+
+    qDebug() << "Update info";
+
 }

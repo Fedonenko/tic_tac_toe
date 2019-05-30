@@ -30,6 +30,8 @@ public:
     virtual void gameInfo(QByteArray &);
     ///информация о соединении
     virtual void connectionInfo(QByteArray &);
+    ///
+    virtual void update(QByteArray &);
 // signals and slots
 private slots:
     //void slotInfoConnectToServer(const QString&);

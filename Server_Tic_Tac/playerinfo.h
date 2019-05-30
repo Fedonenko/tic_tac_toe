@@ -9,13 +9,17 @@ class PlayerInfo : public QObject
 {
 public:
     QString playerName;
-    //QString peerName;
+    ///сокет подключенного игрока
     QTcpSocket* pSocket;
-
+    ///статус игрока
     bool playerStatus;
-
+    ///номер игровой комнаты в которой находится игрок
+    int roomNumber = -1;
+    ///ссылка на карту с информацией о подключенных игроках
     QMap<QTcpSocket*, PlayerInfo*> &mapPlayers;
 
+
+public:
     PlayerInfo( QMap<QTcpSocket*, PlayerInfo*> &v, QObject *pobj = Q_NULLPTR) :
         QObject(pobj),
         mapPlayers (v)
@@ -23,8 +27,9 @@ public:
 
     }
 public slots:
+    ///Удалить ячейку с данными о пользователе при отключении пользователя
     void slotDropCell(){
-
+        
     }
 };
 

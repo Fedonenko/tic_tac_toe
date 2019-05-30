@@ -2,7 +2,7 @@
 #define ICOMMAND_H
 #include<QByteArray>
 
-#define SIZE_COMMAND 5
+#define SIZE_COMMAND 6
 
 //using commandItem = void (ICommand::*)(const QByteArray&);
 

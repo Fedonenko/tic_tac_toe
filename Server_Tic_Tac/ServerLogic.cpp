@@ -34,12 +34,26 @@ void ServerLogic::slotMessage(Message msg){
     }
 }
 void ServerLogic::slotUpdate(){
+    //qDebug() << "Update info";
     QStringList listPlayers;
+    QVector<QVector<int> > vField;
+
+    QByteArray bAgameInfo;
+    QDataStream outGameInfo(&bAgameInfo, QIODevice::WriteOnly);
+
+
+    try {
+
 
     for(auto it = players.begin(); it != players.end(); it++){
+
         QByteArray bA;
         QDataStream out(&bA, QIODevice::WriteOnly);
         listPlayers.clear();
+
+        bAgameInfo.clear();
+        outGameInfo.device()->seek(0);
+
         for(auto tmpPlayer : players){
             if(
                    tmpPlayer->playerName != it.value()->playerName and
@@ -50,6 +64,37 @@ void ServerLogic::slotUpdate(){
                 listPlayers << tmpPlayer->playerName;
             }
         }
+        if(it.value()->playerStatus){
+            //прочитать и переслать значение игрового поля
+            //отослать чей ход
+            //на клиенте заблокировать combobox
+
+            auto &tmpArr = gr[it.value()->roomNumber]->gameField;
+            vField.resize(std::end(tmpArr) - std::begin(tmpArr));
+            for(auto i = 0; i < vField.size(); i++){
+                vField[i].resize(std::end(*tmpArr) - std::begin(*tmpArr));
+                for(auto j = 0; j < vField.size(); j++){
+                    vField[i][j]= tmpArr[i][j];
+                }
+            }
+            outGameInfo << static_cast<qint16>(1) << vField
+                        << gr[it.value()->roomNumber]->statusGame + gr[it.value()->roomNumber]->stepPlayer ;
+
+
+        }
+        else{
+            //переслать дефолтное значение игрового поля
+            //статус никто не подключен
+            vField.resize(C_SIZE);
+            for(auto it = vField.begin(); it < vField.end(); it++){
+                it->resize(C_SIZE);
+                for(auto it_1 = it->begin(); it_1 < it->end(); it_1++){
+                    *it_1 = 0;
+                }
+            }
+            outGameInfo << static_cast<qint16>(0) << vField
+                        << QString("Никто не подключен");
+        }
 
 
 
@@ -58,8 +103,10 @@ void ServerLogic::slotUpdate(){
         out << static_cast<qint16>(0) << QTime::currentTime() << Message::UPDATE
             << Message::CONNECTION_INFO << QString("Подключен к серверу")
             << Message::CLIENTS << listPlayers
-            << Message::GAME_INFO <<"";
-        //emit message();
+            << Message::GAME_INFO << bAgameInfo;
+        emit message(Message(Message::UPDATE, bA, it.value()->pSocket));
+    }  
+    } catch (...) {
     }
 }
 
