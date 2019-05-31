@@ -28,15 +28,19 @@ private:
 
   // signals and slots
 private slots:
+    ///приём сообщений от сервера
     void slotReadyRead();
+    ///ошибки сокета
     void slotError(QAbstractSocket::SocketError);
     //void slotSendToServer();
+    ///отправка сообщений к серверу
     void slotSendToServer(Message);
     //void slotConnect();
 
 signals:
     void infoConnectToServer(const QString&);
     //void tested(const QString&);
+    ///сигнал с сообщением к серверу
     void message(Message);
     //void message(QByteArray);
 };

@@ -8,7 +8,7 @@
 #include"GameRoom.h"
 #include<QTimer>
 
-#define ROOMS 15// дефолтное число поключения 30, по 2 игрока в каждой комнате
+#define ROOMS 15// дефолтное число под  ключения 30, по 2 игрока в каждой комнате
 
 class ServerLogic :
         public QObject, virtual public ICommand
@@ -42,6 +42,7 @@ private:
 private slots:
     void slotMessage(Message);
     void slotUpdate();
+    void slotGameOver(int);
 signals:
     void message(Message);
 };

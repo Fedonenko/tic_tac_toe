@@ -39,9 +39,8 @@ private slots:
     void slotReconnectedToServer();
     ///отсылает имя игрока и запрашивает подключенных
     void slotSendName();
-    //void slotIsConnect();
-    //void slotTest(const QString&);
-    //void slotMessage(const Message &);
+    ///отправляет выбранное имя второг игрока
+    void slotSendNamePlayer2(const QString &);
     ///принимает сообщения от клинета
     void slotMessage(Message);
 signals:

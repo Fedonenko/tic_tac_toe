@@ -1,7 +1,13 @@
 #include "GameRoom.h"
 
-GameRoom::GameRoom(const QString &p0, const QString &p1) :
-    player0 (p0), player1 (p1)
+GameRoom::GameRoom(int number,
+                   const QString &p0, const QString &p1,
+                   QTcpSocket* pl0,
+                   QTcpSocket* pl1
+                   ) :
+    player0 (p0), player1 (p1), numberRoom(number),
+    socketPlayer0(pl0),
+    socketPlayer1(pl1)
 {
     if( QTime::currentTime().msec()%2 ){
         stepPlayer = player0;
@@ -10,12 +16,6 @@ GameRoom::GameRoom(const QString &p0, const QString &p1) :
         stepPlayer = player1;
     }
     statusGame = "Ход игрока ";
-
-//    for(auto itAr = std::begin( gameField); itAr < std::end(gameField); itAr++ ){
-//        for(auto it = std::begin(*itAr); it < std::end(*itAr); it++){
-
-//        }
-//    }
 
 }
 bool GameRoom::win(int v,int (&a)[C_SIZE][C_SIZE]){
@@ -51,14 +51,18 @@ bool GameRoom::win(int v,int (&a)[C_SIZE][C_SIZE]){
 }
 void GameRoom::step(QString nameStep, int i, int j){
     if(nameStep != stepPlayer){
+        //ход не того игрока
         return;
     }
     if(gameField[i][j]){
+        //уже занятая ячейка поля
         return;
     }
     gameField[i][j] = (player0 == nameStep)? 1: -1;
     if (win(gameField[i][j], gameField)){
         //конец игры
+        statusGame = "Выиграл " + stepPlayer;
+        emit gameOver(numberRoom);
     }
     else{
         //меняем ход
@@ -72,5 +76,7 @@ void GameRoom::step(QString nameStep, int i, int j){
         }
         //ничья
         statusGame = "Ничья ";
+
+        emit gameOver(numberRoom);
     }
 }

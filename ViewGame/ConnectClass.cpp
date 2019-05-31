@@ -1,6 +1,6 @@
 #include "ConnectClass.h"
 
-ConnectClass::ConnectClass(QObject *pobj) : QObject(pobj), ICommand ()
+ConnectClass::ConnectClass(QObject *pobj) : ICommand (), QObject(pobj)
 {
     objClient = new ClientTicTac;
     objView = new MyView;
@@ -25,11 +25,14 @@ ConnectClass::ConnectClass(QObject *pobj) : QObject(pobj), ICommand ()
 
     connect(objClient, SIGNAL(message(Message)),
             this,   SLOT(slotMessage(Message)));
+    connect(objView->p_listPlayers, SIGNAL(activated(const QString&)),
+            this,       SLOT(slotSendNamePlayer2(const QString&)));
 
     objView->show();
 
 }
 
+//_________________СЛОТЫ
 void ConnectClass::slotReconnectedToServer(){
     //QString str = objView->p_fieldServersIp->text();
     objClient->connectedToServer(
@@ -43,23 +46,17 @@ void ConnectClass::slotSendName(){
         emit message(Message(Message::CLIENTS, QString("Запрос списка клиентов")));
     }
 }
+void ConnectClass::slotSendNamePlayer2(const QString& name){
+    qDebug() << name;
+    QByteArray bA;
+    QDataStream out(&bA, QIODevice::WriteOnly);
 
-//отправить имя игрока при подключении к серверу и список подключенных игроков
-//void ConnectClass::slotIsConnect(){
-//    if(objView->p_editNamePlayers->text() != ""){
-//        //emit message(Message(Message::TEXT, QString("какой то текст")));
+    out << static_cast<quint16>(Message::GAME_INFO) << QTime::currentTime()
+        << static_cast<qint16>(0) << name;
+    emit message(Message(Message::GAME_INFO, bA));
+}
 
-//        emit message(Message(Message::NAME_CLIENTS, objView->p_editNamePlayers->text()));
-//        qDebug() << "отправлен сигнал с именем";
-//        //for(int i = 0; i < 1000000; i++){ QString str = "  "; }
-//        emit message(Message(Message::CLIENTS, QString("Запрос списка клиентов")));
-//        qDebug() << "отправлен сигнал с запросом на отправку списка клиентов";
-//        //for(int i = 0; i < 1000000; i++){ QString str = "  "; }
-//        //emit message(Message(Message::TEXT, QString(" Someting text")));
-
-//    }
-//}
-
+//
 void ConnectClass::slotMessage(Message msg){
     qDebug() << " <<<Номер команды сообщения: "
              << QString::number(msg.id);
@@ -75,8 +72,7 @@ void ConnectClass::slotMessage(Message msg){
     }
 }
 
-//void performOperation
-
+//___________Реализация Интерфейса
 void ConnectClass::text( QByteArray &bA){
     QDataStream in(&bA, QIODevice::ReadOnly);
     QString str;
@@ -92,20 +88,7 @@ void ConnectClass::clients(QByteArray& bA){
     QDataStream in(&bA, QIODevice::ReadOnly);
     in.setVersion(QDataStream::Qt_5_3);
     QVector<QString> strList;
-
-//    QByteArray t_bA;
-//    QDataStream out(&t_bA, QIODevice::WriteOnly);
-//    out << bA;
-
-//    QDataStream t_in(&t_bA, QIODevice::ReadOnly);
-//    t_in >> strList;
-
     in >> strList;
-
-//    qint16 t_size;
-//    in >> t_size;
-//    qDebug() << t_size;
-//    QString t_str;
     for(auto it = strList.begin(); it < strList.end(); it++){
         objView->p_listPlayers->addItem(*it);
         qDebug() << *it;
