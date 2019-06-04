@@ -53,7 +53,7 @@ void ServerLogic::slotUpdate(){
 
         bAgameInfo.clear();
         outGameInfo.device()->seek(0);
-
+        ///формируем список свобоных игроков
         for(auto tmpPlayer : players){
             if(
                    tmpPlayer->playerName != it.value()->playerName and
@@ -64,6 +64,7 @@ void ServerLogic::slotUpdate(){
                 listPlayers << tmpPlayer->playerName;
             }
         }
+        //проверяем находится ли игрок в игре
         if(it.value()->playerStatus){
             //прочитать и переслать значение игрового поля
             //отослать чей ход
@@ -71,14 +72,16 @@ void ServerLogic::slotUpdate(){
 
             auto &tmpArr = gr[it.value()->roomNumber]->gameField;
             vField.resize(std::end(tmpArr) - std::begin(tmpArr));
+            qDebug() << "Размер вектора" << QString::number(vField.size());
             for(auto i = 0; i < vField.size(); i++){
                 vField[i].resize(std::end(*tmpArr) - std::begin(*tmpArr));
+                qDebug() << "Размер вектора" << QString::number(vField[i].size());
                 for(auto j = 0; j < vField.size(); j++){
                     vField[i][j]= tmpArr[i][j];
                 }
             }
             outGameInfo << static_cast<qint16>(1) << vField
-                        << gr[it.value()->roomNumber]->statusGame + gr[it.value()->roomNumber]->stepPlayer ;
+                        << (QString(gr[it.value()->roomNumber]->statusGame + gr[it.value()->roomNumber]->stepPlayer));
 
 
         }
@@ -100,7 +103,7 @@ void ServerLogic::slotUpdate(){
 
 
 
-        out << static_cast<qint16>(0) << QTime::currentTime() << Message::UPDATE
+        out << static_cast<quint16>(0) << QTime::currentTime() << Message::UPDATE
             << Message::CONNECTION_INFO << QString("Подключен к серверу")
             << Message::CLIENTS << listPlayers
             << Message::GAME_INFO << bAgameInfo;
@@ -170,29 +173,6 @@ void ServerLogic::nameClients(Message &msg){
             );
     emit message(Message (Message::TEXT, QString("Имя успешно добавленно"), msg.pSocket));
 }
-//void ServerLogic::nameClients(Message& msg){
-//    QDataStream in(&msg.data, QIODevice::ReadOnly);
-//    in.setVersion(QDataStream::Qt_5_3);
-//    PlayerInfo plInfo;
-//    in >> plInfo.playerName;
-//    if( players.contains(plInfo.playerName) ){
-//        Message tmpM(Message::TEXT, QString("Игрок с таким именем уже существует"), msg.pSocket);
-//        emit ServerLogic::message(tmpM);
-//        return;
-//    }
-//    else{
-//        plInfo.peerName = msg.pSocket->peerName();
-//        plInfo.pSocket = msg.pSocket;
-//        plInfo.playerStatus = false;
-
-//        players[plInfo.playerName] = plInfo;
-//        qDebug() << "Добавленное имя в карту " + (players[plInfo.playerName]).playerName +
-//                " с именем пира " + plInfo.peerName + msg.pSocket->peerName();
-//        //qDebug() <<
-//        emit message(Message (Message::TEXT, QString("Имя успешно добавленно"), msg.pSocket));
-//    }
-
-//}
 void ServerLogic::clients(Message& msg){
     QVector<QString> strList;
     bool _isEmpty = false;
@@ -256,28 +236,52 @@ void ServerLogic::gameInfo(Message &msg){
     QString tmpStr;
     //читаем что пришло и что с ним делать
     cin >> item;
-    QTcpSocket* pSocketPl2;
+    ///*******************
+
+    //********************
+    QTcpSocket* pSocketPl2 = Q_NULLPTR;
+    qDebug() << "____" << QString::number(0);
     //создание новой игры
     if(item == 0 and players.contains(msg.pSocket)){
         players[msg.pSocket]->playerStatus = true;
         cin >> tmpStr;
+        qDebug() << "____" << QString::number(1);
         for(auto it = players.begin(); it != players.end(); it++){
+            qDebug() << "____" << QString::number(1.1);
+
             if(it.value()->playerName == tmpStr){
+                qDebug() << "____" << QString::number(2);
                 pSocketPl2 = it.value()->pSocket;
                 if(it.value()->playerStatus){
                     emit message(Message(Message::TEXT, QString("Этот игрок занят")));
                     return;
                 }
+                qDebug() << "____" << QString::number(3);
                 it.value()->playerStatus = true;
                 break;
             }
         }
+        if(!pSocketPl2){
+            players[msg.pSocket]->playerStatus = false;
+            qDebug() << "Второй игрок не найден c именем " << tmpStr;
+            return;
+        }
         for(int i = 0; i < ROOMS; i++){
+            qDebug() << "____" << QString::number(4);
             if(gr[i] == Q_NULLPTR){
+                qDebug() << "____" << QString::number(5);
+                QString strPl1, strPl2;
+                strPl1 = players[msg.pSocket]->playerName;
+                qDebug() << "____" << QString::number(5.1);
+                strPl2 = players[pSocketPl2]->playerName;
 
-                gr[i] = new GameRoom( i,players[msg.pSocket]->playerName, players[pSocketPl2]->playerName);
+                qDebug() << "____" << QString::number(5.2);
+
+                gr[i] = new GameRoom( i, strPl1, strPl2);
+                qDebug() << "____" << QString::number(6);
                 players[msg.pSocket]->roomNumber = i;
                 players[pSocketPl2]->roomNumber = i;
+                qDebug() << "____" << QString::number(7);
                 connect(gr[i], SIGNAL(gameOver(int)),
                         this, SLOT(slotGameOver(int)));
                 return;
@@ -293,11 +297,11 @@ void ServerLogic::gameInfo(Message &msg){
     if(item == 1 and players.contains(msg.pSocket)){
         //
         int numRoom = players[msg.pSocket]->roomNumber;
-        if(gr[numRoom] == Q_NULLPTR and gr[numRoom]->numberRoom != numRoom){
+        if(numRoom < 0 and gr[numRoom] == Q_NULLPTR and gr[numRoom]->numberRoom != numRoom){
             qDebug() << "ERROR!!! Такой комнаты " << numRoom << " не существует!";
             return;
         }
-        int x,y;
+        qint16 x,y;
         cin >> x >> y;
         gr[numRoom]->step(players[msg.pSocket]->playerName, x,y);
         return;

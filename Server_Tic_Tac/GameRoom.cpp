@@ -1,20 +1,23 @@
 #include "GameRoom.h"
 
 GameRoom::GameRoom(int number,
-                   const QString &p0, const QString &p1,
+                   QString p0, QString p1,
                    QTcpSocket* pl0,
                    QTcpSocket* pl1
                    ) :
-    player0 (p0), player1 (p1), numberRoom(number),
     socketPlayer0(pl0),
-    socketPlayer1(pl1)
+    socketPlayer1(pl1) ,
+  player0 (p0), player1 (p1),
+  numberRoom(number)
 {
+    qDebug() << "___GameRoom____" << QString::number(0);
     if( QTime::currentTime().msec()%2 ){
         stepPlayer = player0;
     }
     else{
         stepPlayer = player1;
     }
+    qDebug() << "___GameRoom____" << QString::number(1);
     statusGame = "Ход игрока ";
 
 }

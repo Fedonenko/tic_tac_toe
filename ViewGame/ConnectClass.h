@@ -43,6 +43,8 @@ private slots:
     void slotSendNamePlayer2(const QString &);
     ///принимает сообщения от клинета
     void slotMessage(Message);
+    ///
+    void slotButClick(My_XY);
 signals:
     ///отсылает сообщения клиенту
     void message(Message);

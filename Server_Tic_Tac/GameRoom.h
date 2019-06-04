@@ -30,7 +30,7 @@ public:
 
 public:
     GameRoom( int,
-              const QString&p0, const QString&p1,
+              QString p0, QString p1,
               QTcpSocket* pl0 = Q_NULLPTR,
               QTcpSocket* pl1 = Q_NULLPTR
             );

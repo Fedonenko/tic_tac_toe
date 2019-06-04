@@ -51,8 +51,8 @@ void ConnectClass::slotSendNamePlayer2(const QString& name){
     QByteArray bA;
     QDataStream out(&bA, QIODevice::WriteOnly);
 
-    out << static_cast<quint16>(Message::GAME_INFO) << QTime::currentTime()
-        << static_cast<qint16>(0) << name;
+    out << static_cast<quint16>(0) << QTime::currentTime() << static_cast<quint16>(Message::GAME_INFO)
+        << static_cast<qint16>(Message::NEW_GAME) << name;
     emit message(Message(Message::GAME_INFO, bA));
 }
 
@@ -70,6 +70,14 @@ void ConnectClass::slotMessage(Message msg){
         (this->*arrCommandItem[msg.id])(msg.data);
     } catch (...) {
     }
+}
+void ConnectClass::slotButClick(My_XY inf){
+    QByteArray bA;
+    QDataStream out(&bA, QIODevice::WriteOnly);
+    out << static_cast<quint16>(0) << QTime::currentTime() << static_cast<qint16>(Message::GAME_INFO)
+        << static_cast<qint16>(Message::EXIST_GAME)
+        << static_cast<qint16>(inf.x) << static_cast<qint16>(inf.y);
+    emit message(Message(Message::GAME_INFO, bA));
 }
 
 //___________Реализация Интерфейса
@@ -104,7 +112,15 @@ void ConnectClass::clients(QByteArray& bA){
 }
 void ConnectClass::gameInfo(QByteArray& bA){
     QDataStream in(&bA, QIODevice::ReadOnly);
-    QString str;
+
+    qint16 idCommand;
+    QVector<QVector<int>> vField;
+    QString strStatus;
+    in >> idCommand >> vField >> strStatus;
+    qDebug() << "------gameInfo------";
+    objView->setField(vField);
+    objView->p_gameState->setText(strStatus);
+
 
 }
 void ConnectClass::connectionInfo(QByteArray& bA){
@@ -115,7 +131,7 @@ void ConnectClass::connectionInfo(QByteArray& bA){
 }
 void ConnectClass::update(QByteArray& bA){
     QStringList listPlayers;
-    int conInfo, idCommand;
+    int idCommand;
     QString str;
 
     QDataStream in(&bA, QIODevice::ReadOnly);
@@ -126,7 +142,15 @@ void ConnectClass::update(QByteArray& bA){
     objView->p_listPlayers->clear();
     objView->p_listPlayers->addItems(listPlayers);
 
-    in >> idCommand;
+    QByteArray msgBA;
+    in >> idCommand >> msgBA;
+
+    qDebug() << "___Update info___" << QString::number(idCommand);
+
+
+    (this->*arrCommandItem[idCommand])(msgBA);
+
+
 
     qDebug() << "Update info";
 

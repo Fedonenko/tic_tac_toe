@@ -60,6 +60,7 @@ void Server_Tic_Tac::slotReadClient(){
         int cmd;
         //QString str;
         in >> time >> cmd;
+        qDebug() << "Принято сообщение: " << QString::number(cmd);
         emit message(
                     Message(
                         cmd,
@@ -70,7 +71,7 @@ void Server_Tic_Tac::slotReadClient(){
         QString strTmp = pClientSocket->peerAddress().toString() + ':' +
                 QString::number( pClientSocket->peerPort() );
 
-        qDebug() << "Принято сообщение: " << QString::number(cmd);
+        qDebug() << "Переданно сообщение " << QString::number(cmd);
 //                 //<< QString::number( pClientSocket->peerAddress().toIPv4Address()) // хрень
 //                 << pClientSocket->peerName() << pClientSocket->peerPort();
 //        qDebug() << pClientSocket->localAddress()

@@ -16,7 +16,15 @@ struct Message{
         CONNECTION_INFO,
         UPDATE
     };
+    enum{
+        NEW_GAME,
+        EXIST_GAME
+    };
+
 #endif
+    int id;
+    QTcpSocket *pSocket;
+    QByteArray data;
     Message(QTcpSocket *pS = Q_NULLPTR) :
         pSocket (pS)
     {
@@ -32,7 +40,7 @@ struct Message{
         out << static_cast<qint16>(0) << QTime::currentTime() << id;
     }
     Message(int v, QByteArray byteArr, QTcpSocket* pS = Q_NULLPTR) :
-        id (v), data (byteArr), pSocket (pS)
+        id (v), pSocket (pS), data (byteArr)
     {
 //        QDataStream out(&data, QIODevice::WriteOnly);
 //        out << static_cast<qint16>(0) << QTime::currentTime() << id;
@@ -44,9 +52,6 @@ struct Message{
         out.setVersion(QDataStream::Qt_5_3);
         out << static_cast<qint16>(0) << QTime::currentTime() << id << str;
     }
-    int id;
-    QTcpSocket *pSocket;
-    QByteArray data;
 };
 
 

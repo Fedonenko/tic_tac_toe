@@ -5,6 +5,8 @@
 #include<QDataStream>
 #include<QTime>
 
+
+
 struct Message{
     enum{
         TEXT,
@@ -13,6 +15,10 @@ struct Message{
         GAME_INFO,
         CONNECTION_INFO,
         UPDATE
+    };
+    enum{
+        NEW_GAME,
+        EXIST_GAME
     };
 
     Message(QTcpSocket *pS = Q_NULLPTR) :
