@@ -27,8 +27,8 @@ private:
     quint16 nextBlockSize;
 
 private:
-    void sendToClient(QTcpSocket *pSocket,const int cmd,const QString& str);
-    bool sendToClient(const QString &name, const int cmd, const QString& str);
+    void sendToClient(QTcpSocket *pSocket,const qint16 cmd,const QString& str);
+    bool sendToClient(const QString &name, const qint16 cmd, const QString& str);
 public:
     Server_Tic_Tac(quint16 nPort = N_PORT, QObject* pobj = Q_NULLPTR);
 public slots:

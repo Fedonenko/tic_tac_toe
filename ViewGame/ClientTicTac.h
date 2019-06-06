@@ -24,7 +24,7 @@ public:
                 );
     void connectedToServer(const QString&, quint16 );
 private:
-    void serverCommand(const int n, const QString & str);
+    void serverCommand(const qint16 n, const QString & str);
 
   // signals and slots
 private slots:

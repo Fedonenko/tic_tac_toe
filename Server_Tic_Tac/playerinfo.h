@@ -14,7 +14,7 @@ public:
     ///статус игрока
     bool playerStatus;
     ///номер игровой комнаты в которой находится игрок
-    int roomNumber = -1;
+    qint16 roomNumber = -1;
     ///ссылка на карту с информацией о подключенных игроках
     QMap<QTcpSocket*, PlayerInfo*> &mapPlayers;
 

@@ -51,9 +51,27 @@ void ConnectClass::slotSendNamePlayer2(const QString& name){
     QByteArray bA;
     QDataStream out(&bA, QIODevice::WriteOnly);
 
-    out << static_cast<quint16>(0) << QTime::currentTime() << static_cast<quint16>(Message::GAME_INFO)
+    out << static_cast<quint16>(0) << QTime::currentTime() << static_cast<qint16>(Message::GAME_INFO)
         << static_cast<qint16>(Message::NEW_GAME) << name;
+
+    //__________debug
+    QDataStream debIn(&bA,QIODevice::ReadOnly);
+    quint16 dsize;
+    qint16 dcmd0, dcmd1;
+    QTime dtime;
+    QString dname;
+    debIn >> dsize >> dtime >> dcmd0 >> dcmd1 >> dname;
+    qDebug() << dsize << dtime << dcmd0 << dcmd1 << dname;
+
     emit message(Message(Message::GAME_INFO, bA));
+    //__________debug
+    //QDataStream debIn(&bA,QIODevice::ReadOnly);
+    //int dsize, dcmd0, dcmd1;
+    //QTime dtime;
+    //QString dname;
+    debIn.device()->seek(0);
+    debIn >> dsize >> dtime >> dcmd0 >> dcmd1 >> dname;
+    qDebug() << dsize << dtime << dcmd0 << dcmd1 << dname;
 }
 
 //
@@ -114,7 +132,7 @@ void ConnectClass::gameInfo(QByteArray& bA){
     QDataStream in(&bA, QIODevice::ReadOnly);
 
     qint16 idCommand;
-    QVector<QVector<int>> vField;
+    QVector<QVector<qint16>> vField;
     QString strStatus;
     in >> idCommand >> vField >> strStatus;
     qDebug() << "------gameInfo------";
@@ -131,7 +149,7 @@ void ConnectClass::connectionInfo(QByteArray& bA){
 }
 void ConnectClass::update(QByteArray& bA){
     QStringList listPlayers;
-    int idCommand;
+    qint16 idCommand;
     QString str;
 
     QDataStream in(&bA, QIODevice::ReadOnly);

@@ -42,7 +42,7 @@ private:
 private slots:
     void slotMessage(Message);
     void slotUpdate();
-    void slotGameOver(int);
+    void slotGameOver(qint16);
 signals:
     void message(Message);
 };

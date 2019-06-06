@@ -38,13 +38,13 @@ MyView::MyView( QWidget *pwgt) : QWidget (pwgt)
 
     p_brc = new ButtonReClick(-1,-1);
     p_arr = new char*[currentHight];
-    for(int i = 0; i < currentHight; i++){
+    for(qint16 i = 0; i < currentHight; i++){
         p_arr[i] = new char[currentWight]{'_'};
     }
 
     p_playingField =new QGridLayout;
-    for(int i = 0; i < currentHight; i++){
-        for(int j = 0; j < currentWight; j++){
+    for(qint16 i = 0; i < currentHight; i++){
+        for(qint16 j = 0; j < currentWight; j++){
             //QPushButton *pcmd = new QPushButton("_");
             p_playingField->addWidget(createButton("_", i, j), i, j);
         }
@@ -59,7 +59,7 @@ MyView::MyView( QWidget *pwgt) : QWidget (pwgt)
 
 }
 
-QPushButton* MyView::createButton(const QString& str, int x, int y){
+QPushButton* MyView::createButton(const QString& str, qint16 x, qint16 y){
     QPushButton *pcmd = new QPushButton(str);
     ButtonReClick *pbrc = new ButtonReClick(x, y);
     connect(pcmd, SIGNAL(clicked()),
@@ -72,7 +72,7 @@ QPushButton* MyView::createButton(const QString& str, int x, int y){
     //connect(pcmd, SIGNAL(clicked()), SLOT(this_slot));
     return pcmd;
 }
-bool MyView::setCellField(char v, int x, int y){
+bool MyView::setCellField(char v, qint16 x, qint16 y){
     if(x <= currentHight and x > 0 and y <= currentWight and y > 0){
         p_arr[x][y] = v;
         //меняем символ на кнопке в поле gridlayout на переданный
@@ -83,29 +83,29 @@ bool MyView::setCellField(char v, int x, int y){
         return false;
     }
 }
-void MyView::setField(QVector<QVector<int>> v){
-    for(int i = 0; i < currentHight; i++){
-        for(int j = 0; j < currentWight; j++){
-            qDebug() << "*********__setField__befor";
+void MyView::setField(QVector<QVector<qint16>> v){
+    for(qint16 i = 0; i < currentHight; i++){
+        for(qint16 j = 0; j < currentWight; j++){
+            //qDebug() << "*********__setField__befor";
             try{
                 p_arr[i][j] = (v[i][j] >= 0)? ((v[i][j] == 0)? '_' : 'O') :'X';
             }catch(QException ex){
-                qDebug() << "____________" << ex.what() << " " << QString::number(i)
+                qDebug() << "_____ERROR_____" << ex.what() << " " << QString::number(i)
                          << " " << QString::number(j);
                 break;
             }
         }
     }
-    qDebug() << "*********__setField__after";
+    //qDebug() << "*********__setField__after";
     redraw();
 
 }
-void MyView::resize(int sizeX, int sizeY){
+void MyView::resize(qint16 sizeX, qint16 sizeY){
 
 }
 void MyView::redraw(){
-    for(int i = 0; i < currentHight; i++){
-        for(int j = 0; j < currentWight; j++){
+    for(qint16 i = 0; i < currentHight; i++){
+        for(qint16 j = 0; j < currentWight; j++){
             QPushButton *p;
             p = static_cast<QPushButton*>(p_playingField->itemAtPosition(i,j)->widget());
             p->setText( QString(p_arr[i][j]) );
@@ -115,7 +115,7 @@ void MyView::redraw(){
 
 
 
-ButtonReClick::ButtonReClick(int x, int y) :
+ButtonReClick::ButtonReClick(qint16 x, qint16 y) :
     QObject (),
     x(x) , y(y)
 {

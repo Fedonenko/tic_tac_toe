@@ -1,6 +1,6 @@
 #include "GameRoom.h"
 
-GameRoom::GameRoom(int number,
+GameRoom::GameRoom(qint16 number,
                    QString p0, QString p1,
                    QTcpSocket* pl0,
                    QTcpSocket* pl1
@@ -21,19 +21,19 @@ GameRoom::GameRoom(int number,
     statusGame = "Ход игрока ";
 
 }
-bool GameRoom::win(int v,int (&a)[C_SIZE][C_SIZE]){
+bool GameRoom::win(qint16 v,qint16 (&a)[C_SIZE][C_SIZE]){
     bool
             glD = true,
             pobD = true,
             row = true,
             column = true;
-    int n = std::end(a) - std::begin(a);
-    int m = std::end(*a) - std::begin(*a);
-    for(int i = 0; i < n ; i++){
+    qint16 n = std::end(a) - std::begin(a);
+    qint16 m = std::end(*a) - std::begin(*a);
+    for(qint16 i = 0; i < n ; i++){
         pobD = pobD && (a[i][n-i-1] == v)? true: false;
         row = true;
         column = true;
-        for(int j = 0; j < m; j++){
+        for(qint16 j = 0; j < m; j++){
             if(i == j){
                 glD = glD && (a[i][j] == v)? true: false;
             }
@@ -52,7 +52,7 @@ bool GameRoom::win(int v,int (&a)[C_SIZE][C_SIZE]){
 
     return glD || pobD;
 }
-void GameRoom::step(QString nameStep, int i, int j){
+void GameRoom::step(QString nameStep, qint16 i, qint16 j){
     if(nameStep != stepPlayer){
         //ход не того игрока
         return;

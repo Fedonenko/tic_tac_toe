@@ -36,7 +36,7 @@ void ServerLogic::slotMessage(Message msg){
 void ServerLogic::slotUpdate(){
     //qDebug() << "Update info";
     QStringList listPlayers;
-    QVector<QVector<int> > vField;
+    QVector<QVector<qint16> > vField;
 
     QByteArray bAgameInfo;
     QDataStream outGameInfo(&bAgameInfo, QIODevice::WriteOnly);
@@ -103,16 +103,16 @@ void ServerLogic::slotUpdate(){
 
 
 
-        out << static_cast<quint16>(0) << QTime::currentTime() << Message::UPDATE
-            << Message::CONNECTION_INFO << QString("Подключен к серверу")
-            << Message::CLIENTS << listPlayers
-            << Message::GAME_INFO << bAgameInfo;
+        out << static_cast<quint16>(0) << QTime::currentTime() << static_cast<qint16>(Message::UPDATE)
+            << static_cast<qint16>(Message::CONNECTION_INFO) << QString("Подключен к серверу")
+            << static_cast<qint16>(Message::CLIENTS) << listPlayers
+            << static_cast<qint16>(Message::GAME_INFO) << bAgameInfo;
         emit message(Message(Message::UPDATE, bA, it.value()->pSocket));
     }  
     } catch (...) {
     }
 }
-void ServerLogic::slotGameOver(int i){
+void ServerLogic::slotGameOver(qint16 i){
     QString status = gr[i]->statusGame;
 
     QByteArray readyMsg;
@@ -121,7 +121,7 @@ void ServerLogic::slotGameOver(int i){
     //QByteArray bA;
     //QDataStream out(&bA, QIODevice::WriteOnly);
 
-    QVector<QVector <int> > vectorField;
+    QVector<QVector <qint16> > vectorField;
     vectorField.reserve(std::end(gr[i]->gameField) - std::begin(gr[i]->gameField));
     for(auto itVec = vectorField.begin(); itVec < vectorField.end(); itVec++){
         itVec->resize(std::end(*(gr[i]->gameField)) - std::begin(*(gr[i]->gameField)));
@@ -191,7 +191,7 @@ void ServerLogic::clients(Message& msg){
         QDataStream t_out(&bA, QIODevice::WriteOnly);
         t_out << static_cast<quint16>(0)
               << QTime::currentTime()
-              << Message::CLIENTS
+              << static_cast<qint16>(Message::CLIENTS)
               << strList;
         //qDebug() << "Размер отсылаемого байтМассива " << m.data.size();
 
@@ -223,6 +223,8 @@ void ServerLogic::clients(Message& msg){
         qDebug() << "Значение из списка " + *it ;
     }
 }
+
+#include<iostream>
 void ServerLogic::gameInfo(Message &msg){
     //принять имя второго игрока
     //проверить на наличие свбодной комнаты
@@ -235,8 +237,30 @@ void ServerLogic::gameInfo(Message &msg){
     qint16 item;
     QString tmpStr;
     //читаем что пришло и что с ним делать
+    //**********************************************************************************************
+    char dCh;
+    qint16 dInt;
+    std::string dStdStr;
+    QString dQStr;
+    QString dStrNumb;
+
+    for(qint16 i = 0; i < cin.device()->size(); i++){
+        cin >> dInt;
+        dStdStr += static_cast<char>(dInt);
+        dQStr += static_cast<char>(dInt);
+        dStrNumb += QString::number(dInt) + " ";
+    }
+    qDebug() << "dQStr = " << dQStr
+             //<< "dStdStr = " << QString(dStdStr)
+             << "dStrNumb = " << dStrNumb;
+    std::cout << "dStdStr = " << dStdStr << std::endl;
+
+    //**********************************************************************************************
+    cin.device()->seek(0);
+    ///********
     cin >> item;
     ///*******************
+
 
     //********************
     QTcpSocket* pSocketPl2 = Q_NULLPTR;
@@ -266,7 +290,7 @@ void ServerLogic::gameInfo(Message &msg){
             qDebug() << "Второй игрок не найден c именем " << tmpStr;
             return;
         }
-        for(int i = 0; i < ROOMS; i++){
+        for(qint16 i = 0; i < ROOMS; i++){
             qDebug() << "____" << QString::number(4);
             if(gr[i] == Q_NULLPTR){
                 qDebug() << "____" << QString::number(5);
@@ -282,8 +306,8 @@ void ServerLogic::gameInfo(Message &msg){
                 players[msg.pSocket]->roomNumber = i;
                 players[pSocketPl2]->roomNumber = i;
                 qDebug() << "____" << QString::number(7);
-                connect(gr[i], SIGNAL(gameOver(int)),
-                        this, SLOT(slotGameOver(int)));
+                connect(gr[i], SIGNAL(gameOver(qint16)),
+                        this, SLOT(slotGameOver(qint16)));
                 return;
             }
 
@@ -296,7 +320,7 @@ void ServerLogic::gameInfo(Message &msg){
     //информация по уже существующей игре
     if(item == 1 and players.contains(msg.pSocket)){
         //
-        int numRoom = players[msg.pSocket]->roomNumber;
+        qint16 numRoom = players[msg.pSocket]->roomNumber;
         if(numRoom < 0 and gr[numRoom] == Q_NULLPTR and gr[numRoom]->numberRoom != numRoom){
             qDebug() << "ERROR!!! Такой комнаты " << numRoom << " не существует!";
             return;

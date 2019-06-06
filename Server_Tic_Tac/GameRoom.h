@@ -22,26 +22,26 @@ public:
 
     QString stepPlayer;
     QString statusGame;
-    int gameField[C_SIZE][C_SIZE] {{0}};
-    int numberRoom;
+    qint16 gameField[C_SIZE][C_SIZE] {{0}};
+    qint16 numberRoom;
     //QVector<int > v1;
     //QVector<QVector<int> > v;
 
 
 public:
-    GameRoom( int,
+    GameRoom( qint16,
               QString p0, QString p1,
               QTcpSocket* pl0 = Q_NULLPTR,
               QTcpSocket* pl1 = Q_NULLPTR
             );
 public:
     ///
-    void step(QString, int , int);
+    void step(QString, qint16, qint16);
     ///проверка матрицы выигрышная или нет
-    bool win(int v,int (&a)[C_SIZE][C_SIZE]);
+    bool win(qint16 v,qint16 (&a)[C_SIZE][C_SIZE]);
 
 signals:
-    void gameOver(int);
+    void gameOver(qint16);
 
 
 };

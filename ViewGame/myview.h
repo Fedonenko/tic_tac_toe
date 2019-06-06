@@ -33,35 +33,35 @@ private:
 
     QLabel *p_textInfo;
 private:
-    int currentHight = _H_G;
-    int currentWight = W;
+    qint16 currentHight = _H_G;
+    qint16 currentWight = W;
     char **p_arr;
 public:
     MyView(QWidget *pwgt = Q_NULLPTR) ;
 
 public:
-    bool setCellField(char v, int x, int y);
-    void setField(QVector<QVector<int>> v);
-    void resize(int sizeX,int sizeY);
+    bool setCellField(char v, qint16 x, qint16 y);
+    void setField(QVector<QVector<qint16>> v);
+    void resize(qint16 sizeX,qint16 sizeY);
     void redraw();
 private:
-    QPushButton *createButton(const QString& str, int x, int y);
+    QPushButton *createButton(const QString& str, qint16 x, qint16 y);
 //public slots:
 //    void slotFoo();
 };
 struct My_XY{
-    int x;
-    int y;
+    qint16 x;
+    qint16 y;
 };
 
 class ButtonReClick : public QObject
 {
     Q_OBJECT
 private:
-    int x;
-    int y;
+    qint16 x;
+    qint16 y;
 public:
-    ButtonReClick(int, int);
+    ButtonReClick(qint16, qint16);
 
 signals:
     void butClick(My_XY);

@@ -37,7 +37,7 @@ void ClientTicTac::slotReadyRead(){
             break;
         }
         QTime time;
-        int cmd;
+        qint16 cmd;
         in >> time >> cmd;
         emit message( Message(cmd, p_tcpSocket->read(p_tcpSocket->bytesAvailable())));
         nextBlockSize = 0;

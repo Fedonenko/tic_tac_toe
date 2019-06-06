@@ -22,7 +22,7 @@ struct Message{
     };
 
 #endif
-    int id;
+    qint16 id;
     QTcpSocket *pSocket;
     QByteArray data;
     Message(QTcpSocket *pS = Q_NULLPTR) :
@@ -30,27 +30,27 @@ struct Message{
     {
         QDataStream out( &data, QIODevice::WriteOnly);
         out.setVersion(QDataStream::Qt_5_3);
-        out << static_cast<qint16>(0) << QTime::currentTime() << id;
+        out << static_cast<quint16>(0) << QTime::currentTime() << id;
     }
-    Message(int v, QTcpSocket *pS = Q_NULLPTR) :
+    Message(qint16 v, QTcpSocket *pS = Q_NULLPTR) :
         id (v), pSocket (pS)
     {
         QDataStream out( &data, QIODevice::WriteOnly);
         out.setVersion(QDataStream::Qt_5_3);
-        out << static_cast<qint16>(0) << QTime::currentTime() << id;
+        out << static_cast<quint16>(0) << QTime::currentTime() << id;
     }
-    Message(int v, QByteArray byteArr, QTcpSocket* pS = Q_NULLPTR) :
+    Message(qint16 v, QByteArray byteArr, QTcpSocket* pS = Q_NULLPTR) :
         id (v), pSocket (pS), data (byteArr)
     {
 //        QDataStream out(&data, QIODevice::WriteOnly);
-//        out << static_cast<qint16>(0) << QTime::currentTime() << id;
+//        out << static_cast<quint16>(0) << QTime::currentTime() << id;
     }
-    Message(int v, QString str, QTcpSocket* pS = Q_NULLPTR):
+    Message(qint16 v, QString str, QTcpSocket* pS = Q_NULLPTR):
         id (v), pSocket (pS)
     {
         QDataStream out(&data, QIODevice::WriteOnly);
         out.setVersion(QDataStream::Qt_5_3);
-        out << static_cast<qint16>(0) << QTime::currentTime() << id << str;
+        out << static_cast<quint16>(0) << QTime::currentTime() << id << str;
     }
 };
 

@@ -29,7 +29,7 @@ void Server_Tic_Tac::slotNewConnection(){
 
 //    QByteArray bA;
 //    QDataStream out(&bA, QIODevice::WriteOnly);
-//    out << static_cast<qint16>(0)<< QTime::currentTime() << static_cast<int>(0)
+//    out << static_cast<qint16>(0)<< QTime::currentTime() << static_cast<qint16>(0)
 //        << QString("Подключен к серверу");
     //sendToClient(pClientSocket, 4, QString("Подключен к серверу"));
     slotSendToClient(
@@ -57,7 +57,7 @@ void Server_Tic_Tac::slotReadClient(){
             break;
         }
         QTime time;
-        int cmd;
+        qint16 cmd;
         //QString str;
         in >> time >> cmd;
         qDebug() << "Принято сообщение: " << QString::number(cmd);
@@ -84,7 +84,7 @@ void Server_Tic_Tac::slotReadClient(){
     }
 }
 
-//void Server_Tic_Tac::sendToClient(QTcpSocket *pSocket, const int cmd, const QString &str){
+//void Server_Tic_Tac::sendToClient(QTcpSocket *pSocket, const qint16 cmd, const QString &str){
 //    QByteArray arrBlock;
 //    QDataStream out(&arrBlock, QIODevice::WriteOnly);
 //    out.setVersion(QDataStream::Qt_5_3);
@@ -99,7 +99,7 @@ void Server_Tic_Tac::slotReadClient(){
 //    qDebug() << "Send of clients: " + pSocket->peerName();
 //}
 
-//bool Server_Tic_Tac::sendToClient(const QString&, const int, const QString&){
+//bool Server_Tic_Tac::sendToClient(const QString&, const qint16, const QString&){
 
 //    return true;
 //}
