@@ -53,32 +53,39 @@ bool GameRoom::win(qint16 v,qint16 (&a)[C_SIZE][C_SIZE]){
     return glD || pobD;
 }
 void GameRoom::step(QString nameStep, qint16 i, qint16 j){
+    qDebug() << "____step in GameRoom";
     if(nameStep != stepPlayer){
         //ход не того игрока
         return;
     }
+    qDebug() << "____step in GameRoom____0.0";
     if(gameField[i][j]){
         //уже занятая ячейка поля
         return;
     }
+    qDebug() << "____step in GameRoom____0";
     gameField[i][j] = (player0 == nameStep)? 1: -1;
+    qDebug() << "_____ячейка поля = " << QString::number(gameField[i][j]);
     if (win(gameField[i][j], gameField)){
         //конец игры
         statusGame = "Выиграл " + stepPlayer;
         emit gameOver(numberRoom);
+        return;
     }
     else{
+        qDebug() << "____step in GameRoom____1";
         //меняем ход
         stepPlayer = (stepPlayer == player1)? player0: player1;
         //проверить на ничью
         for(auto itAr = std::begin( gameField); itAr < std::end(gameField); itAr++ ){
             for(auto it = std::begin(*itAr); it < std::end(*itAr); it++){
-                if(gameField[i][j] == 0)
+                if(*it == 0)
                     return;
             }
         }
         //ничья
         statusGame = "Ничья ";
+        qDebug() << "____step in GameRoom____2";
 
         emit gameOver(numberRoom);
     }

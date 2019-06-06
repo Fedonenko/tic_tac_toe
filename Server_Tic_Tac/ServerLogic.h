@@ -7,6 +7,7 @@
 #include"message.h"
 #include"GameRoom.h"
 #include<QTimer>
+#include<QException>
 
 #define ROOMS 15// дефолтное число под  ключения 30, по 2 игрока в каждой комнате
 

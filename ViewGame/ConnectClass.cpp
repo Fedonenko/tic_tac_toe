@@ -28,6 +28,9 @@ ConnectClass::ConnectClass(QObject *pobj) : ICommand (), QObject(pobj)
     connect(objView->p_listPlayers, SIGNAL(activated(const QString&)),
             this,       SLOT(slotSendNamePlayer2(const QString&)));
 
+    connect(objView->p_brc, SIGNAL(butClick(My_XY)),
+            this,    SLOT(slotButClick(My_XY) ));
+
     objView->show();
 
 }
@@ -96,6 +99,16 @@ void ConnectClass::slotButClick(My_XY inf){
         << static_cast<qint16>(Message::EXIST_GAME)
         << static_cast<qint16>(inf.x) << static_cast<qint16>(inf.y);
     emit message(Message(Message::GAME_INFO, bA));
+    //______________________debug
+    qDebug() << "Значение Х = " << QString::number(inf.x)
+             << "Значение Y = " << QString::number(inf.y);
+    QDataStream in(&bA, QIODevice::ReadOnly);
+    quint16 dsize;
+    qint16 dcmd0,dcmd1, dx, dy;
+    QTime dtime;
+    in >> dsize >> dtime >> dcmd0 >> dcmd1 >> dx >> dy;
+    qDebug() << dsize << dtime << dcmd0 << dcmd1 << dx << dy;
+    //______________________debug_end
 }
 
 //___________Реализация Интерфейса

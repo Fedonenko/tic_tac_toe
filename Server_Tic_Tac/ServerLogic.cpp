@@ -238,22 +238,22 @@ void ServerLogic::gameInfo(Message &msg){
     QString tmpStr;
     //читаем что пришло и что с ним делать
     //**********************************************************************************************
-    char dCh;
-    qint16 dInt;
-    std::string dStdStr;
-    QString dQStr;
-    QString dStrNumb;
+//    char dCh;
+//    qint16 dInt;
+//    std::string dStdStr;
+//    QString dQStr;
+//    QString dStrNumb;
 
-    for(qint16 i = 0; i < cin.device()->size(); i++){
-        cin >> dInt;
-        dStdStr += static_cast<char>(dInt);
-        dQStr += static_cast<char>(dInt);
-        dStrNumb += QString::number(dInt) + " ";
-    }
-    qDebug() << "dQStr = " << dQStr
-             //<< "dStdStr = " << QString(dStdStr)
-             << "dStrNumb = " << dStrNumb;
-    std::cout << "dStdStr = " << dStdStr << std::endl;
+//    for(qint16 i = 0; i < cin.device()->size(); i++){
+//        cin >> dInt;
+//        dStdStr += static_cast<char>(dInt);
+//        dQStr += static_cast<char>(dInt);
+//        dStrNumb += QString::number(dInt) + " ";
+//    }
+//    qDebug() << "dQStr = " << dQStr
+//             //<< "dStdStr = " << QString(dStdStr)
+//             << "dStrNumb = " << dStrNumb;
+//    std::cout << "dStdStr = " << dStdStr << std::endl;
 
     //**********************************************************************************************
     cin.device()->seek(0);
@@ -327,7 +327,15 @@ void ServerLogic::gameInfo(Message &msg){
         }
         qint16 x,y;
         cin >> x >> y;
-        gr[numRoom]->step(players[msg.pSocket]->playerName, x,y);
+
+        qDebug() << "Значение X = " << x << "Значение Y = " << x;
+
+        try{
+            gr[numRoom]->step(players[msg.pSocket]->playerName, x,y);
+        } catch(QException ex){
+                qDebug() << "ERROR " << QString(ex.what());
+        }
+        qDebug() << "Значения X Y переданны в игровую комнату";
         return;
     }
 
