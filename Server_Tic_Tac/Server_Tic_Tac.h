@@ -8,6 +8,7 @@
 #include<QTcpSocket>
 #include<QDataStream>
 #include<QTime>
+#include<QException>
 #include<QDebug>
 #include"message.h"
 

@@ -67,6 +67,17 @@ void GameRoom::step(QString nameStep, qint16 i, qint16 j){
     gameField[i][j] = (player0 == nameStep)? 1: -1;
     qDebug() << "_____ячейка поля = " << QString::number(gameField[i][j]);
     if (win(gameField[i][j], gameField)){
+        //______________________debug
+        qDebug() << "Победа игрока " << stepPlayer;
+        for(auto it = std::begin(gameField); it < std::end(gameField); it++){
+            QDebug deb = qDebug();
+            for(auto init = std::begin(*it); init < std::end(*it); init++){
+                deb << *init << " ";
+            }
+            //deb << "\n";
+        }
+
+        //______________________debug end
         //конец игры
         statusGame = "Выиграл " + stepPlayer;
         emit gameOver(numberRoom);

@@ -115,8 +115,14 @@ void Server_Tic_Tac::slotSendToClient(Message msg){
     out << static_cast<quint16>(msg.data.size() - sizeof(quint16))
         << QTime::currentTime() << msg.id;
 
-    //qDebug("sendToClient");
-    msg.pSocket->write(msg.data);
+    qDebug("sendToClient");
+    try{
+        msg.pSocket->write(msg.data);
+    }catch(QException ex){
+        qDebug() << "ERROR" << ex.what();
+
+    }
+
     msg.pSocket->flush();//кастыль, нужно подумать как убрать
     qDebug() << "отправленно " + QString::number(msg.id);
 }

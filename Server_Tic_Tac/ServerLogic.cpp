@@ -121,26 +121,42 @@ void ServerLogic::slotGameOver(qint16 i){
     //QByteArray bA;
     //QDataStream out(&bA, QIODevice::WriteOnly);
 
-    QVector<QVector <qint16> > vectorField;
-    vectorField.reserve(std::end(gr[i]->gameField) - std::begin(gr[i]->gameField));
-    for(auto itVec = vectorField.begin(); itVec < vectorField.end(); itVec++){
-        itVec->resize(std::end(*(gr[i]->gameField)) - std::begin(*(gr[i]->gameField)));
-        for(auto it = itVec->begin(); it < itVec->end(); it++){
-            *it = 0;
+    QVector<QVector <qint16> > vField;
+
+    qDebug() << "_____slotGameOver 0";
+    auto &tmpArr = gr[i]->gameField;
+
+    vField.resize(std::end(tmpArr) - std::begin(tmpArr));
+    qDebug() << "Размер вектора" << QString::number(vField.size());
+    for(auto i = 0; i < vField.size(); i++){
+        vField[i].resize(std::end(*tmpArr) - std::begin(*tmpArr));
+        qDebug() << "Размер вектора" << QString::number(vField[i].size());
+        for(auto j = 0; j < vField.size(); j++){
+            vField[i][j]= tmpArr[i][j];
         }
     }
 
-    outReady << static_cast<quint16>(Message::GAME_INFO) << QTime::currentTime()
-             << static_cast<qint16>(2) << vectorField << gr[i]->statusGame;
+    qDebug() << "_____slotGameOver 1";
+    outReady << static_cast<quint16>(0) << QTime::currentTime() << static_cast<qint16>(Message::GAME_INFO)
+             << static_cast<qint16>(2) << vField << gr[i]->statusGame;
 
-
+    qDebug() << "_____slotGameOver 2      ";
+    qDebug() << gr[i]->socketPlayer0;
+    qDebug() << gr[i]->socketPlayer0->peerAddress();
     emit message(Message(Message::GAME_INFO, readyMsg, gr[i]->socketPlayer0));
+
+    qDebug() << "_____slotGameOver 2.1";
+
     players[gr[i]->socketPlayer0]->playerStatus = false;
     players[gr[i]->socketPlayer0]->roomNumber = -1;
+
+    qDebug() << "_____slotGameOver 3";
 
     emit message(Message(Message::GAME_INFO, readyMsg, gr[i]->socketPlayer1));
     players[gr[i]->socketPlayer1]->playerStatus = false;
     players[gr[i]->socketPlayer1]->roomNumber = -1;
+
+    qDebug() << "_____slotGameOver 4";
 
     delete gr[i];
     gr[i] = Q_NULLPTR;
@@ -301,7 +317,7 @@ void ServerLogic::gameInfo(Message &msg){
 
                 qDebug() << "____" << QString::number(5.2);
 
-                gr[i] = new GameRoom( i, strPl1, strPl2);
+                gr[i] = new GameRoom( i, strPl1, strPl2, msg.pSocket, pSocketPl2);
                 qDebug() << "____" << QString::number(6);
                 players[msg.pSocket]->roomNumber = i;
                 players[pSocketPl2]->roomNumber = i;
